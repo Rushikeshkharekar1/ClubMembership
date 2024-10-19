@@ -14,6 +14,13 @@ namespace ClubMembership.Repositories
             _context = context;
         }
 
+        public void AddClubMemberHobby(ClubMemberHobby hobby)
+        {
+            _context.ClubMemberHobbies.Add(hobby);
+            _context.SaveChanges(); // Ensure you call SaveChanges here to persist the new hobby
+        }
+
+
         public IEnumerable<Hobby> GetAllHobbies()
         {
             return _context.Hobbies.ToList();

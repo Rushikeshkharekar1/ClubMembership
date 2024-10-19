@@ -15,14 +15,48 @@ namespace ClubMembership.Repositories
             _context = context;
         }
 
-        public IEnumerable<ClubMember> GetAllClubMembers()
+        public IEnumerable<ClubMember> GetAllClubMembers(string memberName = null, string societyName = null, int? gender = null, int? membershipCategory = null, bool? isActive = null)
         {
-            return _context.ClubMembers
-      .Include(c => c.Society) // Include the related Society entity
-      .Include(c => c.ClubMemberHobbies) // Include the ClubMemberHobbies navigation property
-      .ThenInclude(cmh => cmh.Hobby) // Include the related Hobby entity
-      .ToList(); // Execute the query and return the list
+            var query = _context.ClubMembers
+                .Include(cm => cm.Society)
+                .Include(cm => cm.ClubMemberHobbies)
+                .ThenInclude(cmh => cmh.Hobby)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(memberName))
+            {
+                query = query.Where(cm => cm.MemberName.Contains(memberName));
+            }
+
+            if (!string.IsNullOrEmpty(societyName))
+            {
+                query = query.Where(cm => cm.Society.SocietyName.Contains(societyName));
+            }
+
+            if (gender.HasValue)
+            {
+                query = query.Where(cm => cm.Gender == gender.Value);
+            }
+
+            if (membershipCategory.HasValue)
+            {
+                query = query.Where(cm => cm.MembershipCategory == membershipCategory.Value);
+            }
+
+            if (isActive.HasValue)
+            {
+                query = query.Where(cm => cm.IsActive == isActive.Value);
+            }
+
+            return query.ToList();
         }
+
+        public void AddClubMember(ClubMember member)
+        {
+            _context.ClubMembers.Add(member);
+            _context.SaveChanges(); // Ensure you call SaveChanges here to persist the new member
+        }
+
 
         public ClubMember GetClubMemberById(Guid id)
         {
