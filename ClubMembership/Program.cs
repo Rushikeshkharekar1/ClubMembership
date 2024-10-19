@@ -1,3 +1,6 @@
+using ClubMembership.Models;
+using ClubMembership.Repositories;
+
 namespace ClubMembership
 {
     public class Program
@@ -8,6 +11,14 @@ namespace ClubMembership
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Register repositories
+            builder.Services.AddScoped<IClubMemberRepository, ClubMemberRepository>();
+            builder.Services.AddScoped<IHobbyRepository, HobbyRepository>();
+            builder.Services.AddScoped<ISocietyRepository, SocietyRepository>();
+
+            // Register DbContext
+            builder.Services.AddDbContext<iBlueAnts_MembersContext>();
 
             var app = builder.Build();
 
@@ -28,7 +39,7 @@ namespace ClubMembership
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=ClubMember}/{action=ShowMembers}/{id?}");
 
             app.Run();
         }
