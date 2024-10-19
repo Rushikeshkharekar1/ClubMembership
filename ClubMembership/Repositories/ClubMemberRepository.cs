@@ -17,7 +17,11 @@ namespace ClubMembership.Repositories
 
         public IEnumerable<ClubMember> GetAllClubMembers()
         {
-            return _context.ClubMembers.Include(c => c.Society).Include(c => c.ClubMemberHobbies).ToList();
+            return _context.ClubMembers
+      .Include(c => c.Society) // Include the related Society entity
+      .Include(c => c.ClubMemberHobbies) // Include the ClubMemberHobbies navigation property
+      .ThenInclude(cmh => cmh.Hobby) // Include the related Hobby entity
+      .ToList(); // Execute the query and return the list
         }
 
         public ClubMember GetClubMemberById(Guid id)
